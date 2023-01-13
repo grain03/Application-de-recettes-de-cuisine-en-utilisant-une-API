@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://kit.fontawesome.com/29e6f48cb7.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <title>Cuisine</title>
+</head>
+<body>
+ 
+        <!--Navbar-->
+    <nav class="navbar navbar-expand-md bg-dark text-white">
+        <div class="container">
+            <a class="navbar-brand text-info font-weight-bold" href="http://127.0.0.1:5500/Brief%2011/cuisine.html">CUISINE</a>
+            <button class="navbar-toggler text-info" type="button" data-bs-toggle="collapse" data-bs-target="#mymenu">☰</button>    
+           <div class="collapse navbar-collapse" id="mymenu">
+                <ul class="navbar-nav text-light">
+                    <li class="nav-item"><a href="#" onclick="showcategory()" class="nav-link text-light">Search By Gategory</a></li>
+                    <li class="nav-item"><a href="#" onclick="showinput()" class="nav-link text-light">Search By Input</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>  
+
+    <!--Hero-->
+<section class="bg-light">
+    <form class="p-3" role="search" onsubmit="return false">
+        <input id="search" class="form-control me-2" type="search" placeholder="Search" aria-label="Search" onkeyup="searchhere(this.value)">
+    </form>
+    <!--Category-->
+    <div  class="filter d-flex justify-content-center pb-3">
+            <select onchange="changecategory()" id="category" class="form-select btn bg-info text-light p-2 m-2" aria-label="Default select example">
+                <option>Beef</option>
+                <option>Breakfast</option>
+                <option>Chicken</option>
+                <option>Dessert</option>
+                <option>Goat</option>
+                <option selected>Lamb</option>
+                <option>Miscellaneous</option>
+                <option>Pasta</option>
+                <option>Seafood</option>
+                <option>Side</option>
+                <option>Starter</option>
+                <option>Vegan</option>
+                <option>Vegetarian</option>
+            </select>
+            
+
+    <!--Area-->
+            <select onchange="changearea()" id="area" class="form-select btn bg-info text-light p-2 m-2" aria-label="Default select example">
+                <option>American</option>
+                <option>British</option>
+                <option>Canadian</option>
+                <option>Chinese</option>
+                <option>Croatian</option>
+                <option>Dutch</option>
+                <option>Egyptian</option>
+                <option>French</option>
+                <option>Greek</option>
+                <option>Indian</option>
+                <option>Irish</option>
+                <option>Italian</option>
+                <option>Jamaican</option>
+                <option>Japanese</option>
+                <option>Kenyan</option>
+                <option>Malaysian</option>
+                <option>Mexican</option>
+                <option selected="true">Moroccan</option>
+                <option>Polish</option>
+                <option>Portuguese</option>
+                <option>Russian</option>
+                <option>Spanish</option>
+                <option>Thai</option>
+                <option>Tunisian</option>
+                <option>Turkish</option>
+                <option>Vietnamese</option>
+            </select>
+    </div>
+
+    <div class="d-lg-flex text-sm-center text-lg-right mr-lg-5">
+        <div class="text-sm-center text-lg-left mt-lg-5 ml-lg-5">
+            <h1 class="mt-lg-5">TROUVEZ VOS <span class="text-info">RECETTES DE CUISINE</span></h1>
+            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Sapiente blanditiis dolore ad velit rem. Expedita aliquam ducimus sit molestiae quibusdam, similique unde magnam? Facilis architecto enim, ducimus amet quam dolore dolorem recusandae numquam deleniti explicabo laudantium dolores!</p>
+            <button id="btnblur" onclick="btn()" class="btn btn-info">VOIR NOS RECETTES</button>
+        </div>
+        <img src="./food.svg" class="img-fluid w-50" >
+    </div>
+</section>
+    <!--Cards-->
+    <div id="herodiv" class="cards justify-content-center row row-cols-md-9 row-cols-lg-4 m-4 pt-3">
+    </div>
+    <!--Modal-->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              
+                <h1 id="h1modal" class="modal-title fs-1 ml-1" id="exampleModalLabel"></h1>
+                <img class="card-img-top w-50" id="imgmodal" alt="Image">
+
+            </div>
+            <div class="modal-body">
+              <h5 id="cat"></h5>
+              <h5 id="reg"></h5>
+              <h5>Liste des Ingrédients:</h5>
+              <ul id="ul">
+              </ul>
+
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Lobster&display=swap');
+
+
+</style>
+
+<script>
+
+
+
+    let search = document.getElementById('search');
+    let category = document.getElementById('category');
+    let category2 = document.getElementById('area');
+
+
+// Second Page Filter By Area
+function showcategory(){
+        search.style.display = "none";
+        category.style.display = "flex";
+        category2.style.display = "flex";
+        changearea()
+        changecategory()
+}
+
+
+    function changearea(){
+    let areatxt = document.getElementById('area').value;
+    let arealink = `https://www.themealdb.com/api/json/v1/1/filter.php?a=${areatxt}`
+    fetch(arealink)
+    .then((res) => res.json())
+    .then(function(answer){
+        let herodiv = document.getElementById('herodiv');
+        herodiv.innerHTML = ''
+
+
+        for(let k=0; k < answer.meals.length; k++){
+            let maindiv = document.createElement('div');
+            let img = document.createElement('img');
+            let div = document.createElement('div');
+            let h5 = document.createElement('h5');
+            maindiv.setAttribute("class", "card m-1");
+            maindiv.setAttribute("style", "width: 18rem;");
+            img.setAttribute("class", "card-img-top");
+            img.src= answer.meals[k].strMealThumb;
+            div.setAttribute("class", "card-body");
+            h5.setAttribute("class", "card-title m-2");
+            let h5txt = document.createTextNode(answer.meals[k].strMeal)
+            herodiv.appendChild(maindiv);
+            maindiv.appendChild(img);
+            maindiv.appendChild(div);
+            maindiv.appendChild(h5);
+            h5.appendChild(h5txt)
+            }
+        
+    })
+
+}
+
+// second page filter by category
+    function changecategory(){
+    let categorytxt = document.getElementById('category').value;
+    let categorylink = `https://www.themealdb.com/api/json/v1/1/filter.php?c=${categorytxt}`
+    console.log(categorylink)
+    fetch(categorylink)
+    .then((res) => res.json())
+    .then(function(answer){
+        let herodiv = document.getElementById('herodiv');
+        herodiv.innerHTML = ''
+        
+        for(let k=0; k < answer.meals.length; k++){
+            let maindiv = document.createElement('div');
+            let img = document.createElement('img');
+            let div = document.createElement('div');
+            let h5 = document.createElement('h5');
+            maindiv.setAttribute("class", "card m-1");
+            maindiv.setAttribute("style", "width: 18rem;");
+            img.setAttribute("class", "card-img-top");
+            img.src= answer.meals[k].strMealThumb;
+            div.setAttribute("class", "card-body");
+            h5.setAttribute("class", "card-title m-2");
+            let h5txt = document.createTextNode(answer.meals[k].strMeal)
+            herodiv.appendChild(maindiv);
+            maindiv.appendChild(img);
+            maindiv.appendChild(div);
+            maindiv.appendChild(h5);
+            h5.appendChild(h5txt)
+            }
+        
+    })
+}
+
+
+
+
+
+
+
+
+
+    function hidecate(){
+        category.style.display = "none";
+        category2.style.display = "none";
+    }
+    hidecate()
+
+    function btn(){
+        search.focus()
+        category.focus()       
+    }
+
+
+    function showinput(){
+        search.style.display = "flex";
+        category.style.display = "none";
+        category2.style.display = "none";
+    }
+
+    let cardtitle = document.getElementById('card-title');
+
+
+// Show random cards
+    for(i=0; i<6; i++){
+    fetch('https://www.themealdb.com/api/json/v1/1/random.php')
+    .then((response) => response.json())
+    .then(function(data){
+            let herodiv = document.getElementById('herodiv');
+            let maindiv = document.createElement('div');
+            let img = document.createElement('img');
+            let div = document.createElement('div');
+            let h5 = document.createElement('h5');
+            let a = document.createElement('a');
+            maindiv.setAttribute("class", "card m-1");
+            maindiv.setAttribute("style", "width: 18rem;");
+            img.setAttribute("class", "card-img-top");
+            img.src= data.meals[0].strMealThumb;
+            div.setAttribute("class", "card-body");
+            h5.setAttribute("class", "card-title m-2");
+            a.setAttribute("class", "btn btn-info text-light m-2");
+            a.setAttribute("data-bs-toggle", "modal");
+            a.setAttribute("data-bs-target", "#exampleModal");
+            a.addEventListener("click", showdetails);
+            let imgmodal = document.getElementById('imgmodal');
+            let h1modal = document.getElementById('h1modal');
+            let cat = document.getElementById('cat');
+            let reg = document.getElementById('reg');
+            function showdetails(){
+                let ul = document.getElementById('ul');
+                ul.innerHTML = '';
+                imgmodal.src = data.meals[0].strMealThumb;
+                h1modal.innerText = data.meals[0].strMeal;
+                cat.innerText = `Catégorie: ${data.meals[0].strCategory}`
+                reg.innerText = `Région: ${data.meals[0].strArea}`
+                for(let a=0; a<20; a++){
+                    let Ingredient = [data.meals[0].strIngredient1, data.meals[0].strIngredient2, data.meals[0].strIngredient3, data.meals[0].strIngredient4, data.meals[0].strIngredient5, data.meals[0].strIngredient6,data.meals[0].strIngredient7,data.meals[0].strIngredient8,data.meals[0].strIngredient9,data.meals[0].strIngredient10,data.meals[0].strIngredient11,data.meals[0].strIngredient12,data.meals[0].strIngredient13,data.meals[0].strIngredient14,data.meals[0].strIngredient15,data.meals[0].strIngredient16,data.meals[0].strIngredient17,data.meals[0].strIngredient18,data.meals[0].strIngredient19,data.meals[0].strIngredient20]
+                    let Measure = [data.meals[0].strMeasure1, data.meals[0].strMeasure2, data.meals[0].strMeasure3, data.meals[0].strMeasure4, data.meals[0].strMeasure5, data.meals[0].strMeasure6,data.meals[0].strMeasure7,data.meals[0].strMeasure8,data.meals[0].strMeasure9,data.meals[0].strMeasure10,data.meals[0].strMeasure11,data.meals[0].strMeasure12,data.meals[0].strMeasure13,data.meals[0].strMeasure14,data.meals[0].strMeasure15,data.meals[0].strMeasure16,data.meals[0].strMeasure17,data.meals[0].strMeasure18,data.meals[0].strMeasure19,data.meals[0].strMeasure20]
+
+                    if(Ingredient[a] !== ""){
+                        let li = document.createElement('li');
+                        let litxt = document.createTextNode(Ingredient[a] + ": " + Measure[a]);
+                        ul.appendChild(li)
+                        li.appendChild(litxt)
+                    }
+                }
+            }
+            let h5txt = document.createTextNode(data.meals[0].strMeal)
+            let atxt = document.createTextNode("Details")
+            herodiv.appendChild(maindiv);
+            maindiv.appendChild(img);
+            maindiv.appendChild(div);
+            maindiv.appendChild(h5);
+            h5.appendChild(h5txt)
+            maindiv.appendChild(a)
+            a.appendChild(atxt)
+            
+        })
+}
+
+
+// Search Engine
+
+function searchhere(value){
+    fetch('https://www.themealdb.com/api/json/v1/1/search.php?s=')
+    .then((res) => res.json())
+    .then(function(answer){
+        let herodiv = document.getElementById('herodiv');
+        herodiv.innerHTML = ''
+
+
+        for(let k=0; k < 25; k++){
+            if(answer.meals[k].strMeal.toLowerCase().replace(/ /g,'').includes(value.toLowerCase().replace(/ /g,''))){
+            let maindiv = document.createElement('div');
+            let img = document.createElement('img');
+            let div = document.createElement('div');
+            let h5 = document.createElement('h5');
+            let a = document.createElement('a');
+            maindiv.setAttribute("class", "card m-1");
+            maindiv.setAttribute("style", "width: 18rem;");
+            img.setAttribute("class", "card-img-top");
+            img.src= answer.meals[k].strMealThumb;
+            div.setAttribute("class", "card-body");
+            h5.setAttribute("class", "card-title m-2");
+            a.setAttribute("class", "btn btn-info text-light m-2");
+            a.setAttribute("data-bs-toggle", "modal");
+            a.setAttribute("data-bs-target", "#exampleModal");
+            a.addEventListener("click", showdetails2);
+            let imgmodal = document.getElementById('imgmodal');
+            let h1modal = document.getElementById('h1modal');
+            let cat = document.getElementById('cat');
+            let reg = document.getElementById('reg');
+            let h5txt = document.createTextNode(answer.meals[k].strMeal)
+            let atxt = document.createTextNode("Details")
+            herodiv.appendChild(maindiv);
+            maindiv.appendChild(img);
+            maindiv.appendChild(div);
+            maindiv.appendChild(h5);
+            h5.appendChild(h5txt)
+            maindiv.appendChild(a)
+            a.appendChild(atxt)
+            function showdetails2(){
+                console.log('done')
+                let ul = document.getElementById('ul');
+                ul.innerHTML = '';
+                imgmodal.src = answer.meals[k].strMealThumb;
+                h1modal.innerText = answer.meals[k].strMeal;
+                cat.innerText = `Catégorie: ${answer.meals[k].strCategory}`
+                reg.innerText = `Région: ${answer.meals[k].strArea}`
+                for(let o=0; o<20; o++){
+                    let Ingredient = [answer.meals[k].strIngredient1, answer.meals[k].strIngredient2, answer.meals[k].strIngredient3, answer.meals[k].strIngredient4, answer.meals[k].strIngredient5, answer.meals[k].strIngredient6,answer.meals[k].strIngredient7,answer.meals[k].strIngredient8,answer.meals[k].strIngredient9,answer.meals[k].strIngredient10,answer.meals[k].strIngredient11,answer.meals[k].strIngredient12,answer.meals[k].strIngredient13,answer.meals[k].strIngredient14,answer.meals[k].strIngredient15,answer.meals[k].strIngredient16,answer.meals[k].strIngredient17,answer.meals[k].strIngredient18,answer.meals[k].strIngredient19,answer.meals[k].strIngredient20]
+                    let Measure = [answer.meals[k].strMeasure1, answer.meals[k].strMeasure2, answer.meals[k].strMeasure3, answer.meals[k].strMeasure4, answer.meals[k].strMeasure5, answer.meals[k].strMeasure6,answer.meals[k].strMeasure7,answer.meals[k].strMeasure8,answer.meals[k].strMeasure9,answer.meals[k].strMeasure10,answer.meals[k].strMeasure11,answer.meals[k].strMeasure12,answer.meals[k].strMeasure13,answer.meals[k].strMeasure14,answer.meals[k].strMeasure15,answer.meals[k].strMeasure16,answer.meals[k].strMeasure17,answer.meals[k].strMeasure18,answer.meals[k].strMeasure19,answer.meals[k].strMeasure20]
+
+                    if(Ingredient[o] !== ""){
+                        let li = document.createElement('li');
+                        let litxt = document.createTextNode(Ingredient[o] + ": " + Measure[o]);
+                        ul.appendChild(li)
+                        li.appendChild(litxt)
+                    }
+                }
+            }
+
+            }
+        }
+    })
+}
+
+
+
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+</body>
+</html>
